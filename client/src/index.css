@@ -1,0 +1,75 @@
+body {
+  background-color: #0D1B2A;
+  color: #E0E1DD;
+}
+h1 {
+  margin-top: 2vh;
+  margin-left: 2vh;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 5vh;
+}
+h2 {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 4vh;
+}
+h3 {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 3vh;
+}
+#bar {
+  display: flex;
+}
+#empty {
+  flex: 3;
+}
+#search {
+  margin-top: 2vh;
+  flex: 1;
+  height: 4vh;
+  background-color: transparent;
+  border: #1B263B 1px solid;
+  border-radius: 10px;
+  padding: 1vh;
+  font-size: 1vw;
+  font-family: 'Courier New', Courier, monospace;
+  font-style: italic;
+  color: #E0E1DD;
+}
+#search:focus {
+  font-style: normal;
+}
+#search_button {
+  margin-top: 2vh;
+  margin-left: 1vw;
+  height: 6vh;
+  flex: 0.1;
+  background-color: transparent;
+  border: none;
+  font-size: 1vw;
+}
+#search_button:hover {
+  background-color: #1B263B;
+  cursor: pointer;
+}
+#panel {
+  margin-bottom: 2vh;
+  margin-left: 2vh;
+  display: flex;
+}
+#panel_bottom {
+  margin-left: 2vh;
+}
+#panel_bottom h3 {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+#chart {
+  margin-left: 5%;
+}
+#name {
+  padding-right: 10px;
+}
+.price {
+  padding-right: 10px;
+  padding-top: 10px;
+}
