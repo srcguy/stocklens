@@ -8,10 +8,18 @@ app.use(express.json());
 
 app.post('/', async(req, res) => {
     const symbol = await req.body.symbol;
+    const range = await req.body.range;
     const quote = await yahooFinance.quote(symbol);
     console.log(quote);
     var datetime = new Date();
-    datetime.setDate(datetime.getDate() - 7)
+    if (isNaN(range) == false)
+    {
+      datetime.setDate(datetime.getDate() - range);
+    }
+    else
+    {
+      datetime.setDate(datetime.getDate() - 7);
+    }
     const queryOptions = { period1: datetime.toISOString().slice(0,10), /* ... */ };
     const history = await yahooFinance.historical(symbol, queryOptions);
     console.log(history);
