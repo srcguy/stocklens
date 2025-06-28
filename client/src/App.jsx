@@ -11,7 +11,7 @@ function App() {
 
   const handleSubmit = async() => {
     var rangeDays = 5;
-    if (document.getElementById("days") != null){
+    if (document.getElementById("days") != null && document.getElementById("days").value != ''){
       rangeDays = document.getElementById("days").value;
     }
     const search = await axios.post('http://localhost:8080', { symbol: document.getElementById("search").value.toUpperCase(), range: rangeDays});
