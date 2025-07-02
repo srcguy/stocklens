@@ -2,6 +2,8 @@ import express from 'express';
 import yahooFinance from 'yahoo-finance2';
 import cors from 'cors';
 const app = express();
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
 app.use(cors())
 app.use(express.json());
@@ -75,6 +77,3 @@ app.post('/aside', async(req, res) => {
       list: dataList
     });
     });
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
