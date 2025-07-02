@@ -20,6 +20,16 @@ h4 {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 2vh;
 }
+main {
+  width: 90vw;
+  margin-right: 3vw;
+}
+aside {
+
+}
+section {
+  display: flex;
+}
 #bar {
   display: flex;
 }
@@ -41,10 +51,11 @@ h4 {
 }
 #search:focus {
   font-style: normal;
+  background-color: transparent;
 }
 #days {
   margin-top: 2vh;
-  margin-right: 5vw;
+  margin-right: 0vw;
   flex: 1;
   height: 4vh;
   background-color: transparent;
@@ -87,9 +98,12 @@ h4 {
   margin-top: 20px;
 }
 #chart {
-  margin-left: 5%;
+  margin-left: 0%;
 }
 #name {
+  padding-right: 10px;
+}
+#symbol {
   padding-right: 10px;
 }
 .price {
@@ -98,5 +112,30 @@ h4 {
 }
 .percent {
   padding-right: 10px;
-  padding-top: 2vh;
+  padding-top: 2.3vh;
+}
+.aside_panel{
+  border: #1B263B 1px solid;
+  padding: 1vw;
+  border-radius: 10%;
+  margin-bottom: 1vh;
+  margin-right: 3vw;
+  width: 10vw;
+  height: 11vh;
+}
+.aside_panel h3 {
+  margin: 0;
+}
+.aside_panel h4 {
+  margin: 0;
+  margin-right: 10px;
+}
+.aside_panel .panel {
+  display: flex;
+}
+.aside_panel:hover{
+  transition-duration: 500ms;
+  border: #1B263B 1px solid;
+  background-color: #1B263B;
+  cursor: pointer;
 }
