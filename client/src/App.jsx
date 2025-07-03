@@ -9,9 +9,8 @@ function App() {
   const [data, setData] = useState(null);
   const [info, setInfo] = useState(null);
   const [dataAside, setDataAside] = useState(null);
-  const [loading, setLoading] = useState(true);
-  var rangeDays = 5;
 
+  var rangeDays = 5;
   function rangeChange(symbolGet) {
     if (event.keyCode == 13)
     {
@@ -40,20 +39,40 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       const search = await axios.post('http://localhost:8080/aside', {});
       console.log(search);
       setDataAside(search)
-      setLoading(false)
     }
     fetchData();
-    const fetchData2 = async () => {
-      const search = await axios.post('http://localhost:8080/aside', {});
-      console.log(search);
-      setDataAside(search)
-    }
-    setInterval(async() => fetchData2(), 5000)
+    setInterval(async() => fetchData(), 5000)
   }, [])
+
+  function MainChart({ data }){
+    return (
+      <ResponsiveContainer id="chart" width="100%" height={400}>
+        <LineChart data={data}>
+        <CartesianGrid strokeDasharray="1 4" />
+        <XAxis dataKey="date" />
+        <YAxis domain={['auto', 'auto']} />
+        <Tooltip />
+        <Line isAnimationActive={false} type="monotone" dataKey="close" stroke="gray" dot={true} />
+        </LineChart>
+      </ResponsiveContainer>
+    )
+  }
+
+  function AsideChart({ dataAside, index }){
+    return (
+    <ResponsiveContainer id="chart" width="100%" height={50}>
+      <LineChart data={dataAside.data.list[index][3]}>
+      <XAxis dataKey="date" hide={true}/>
+      <YAxis domain={['auto', 'auto']} hide={true}/>
+      <Line isAnimationActive={false} type="monotone" dataKey="close" stroke={dataAside.data.list[index][0] > dataAside.data.list[index][1] ? 'green' : 'red' } dot={false}/>
+      </LineChart>
+    </ResponsiveContainer>  
+    )
+  }
+
   return (
     <>
     <div id="bar">
@@ -73,17 +92,7 @@ function App() {
         <input onKeyDown={() => rangeChange(document.getElementById("symbol").innerText)} type='text' class="days" id="days" name="days" placeholder='Range (in days)...'></input>
       </div>
     )}
-    {data != null && (
-        <ResponsiveContainer id="chart" width="100%" height={400}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="1 3" />
-            <XAxis dataKey="date" />
-            <YAxis domain={['auto', 'auto']} />
-            <Tooltip />
-            <Line type="monotone" dataKey="close" stroke="gray" dot={true} />
-          </LineChart>
-        </ResponsiveContainer>
-      )}
+    {data != null && <MainChart data={data}/>}
     { info && (
       <div id="panel_bottom">
         <h3>Previous close: {info.data.previousClose} {info.data.currency}</h3>
@@ -95,57 +104,33 @@ function App() {
     <aside>
       <div onClick={() => handleSubmit("^GSPC", "7")} class="aside_panel">
         <h3>S&P 500</h3>
-        { loading == false && (
+        { dataAside != null && (
         <div class="panel">
-          <h4 style={{color: dataAside.data.list[0][0] > dataAside.data.list[0][1] ? 'green' : 'red' }} dot={false}>{dataAside.data.list[0][0]}</h4>
-          <h4 style={{color: dataAside.data.list[0][0] > dataAside.data.list[0][1] ? 'green' : 'red' }} dot={false}>{((dataAside.data.list[0][0] - dataAside.data.list[0][1]) / dataAside.data.list[0][1] * 100).toFixed(2)}%</h4>
+          <h4 style={{color: dataAside.data.list[0][0] > dataAside.data.list[0][1] ? 'green' : 'red' }}>{dataAside.data.list[0][0]}</h4>
+          <h4 style={{color: dataAside.data.list[0][0] > dataAside.data.list[0][1] ? 'green' : 'red' }}>{((dataAside.data.list[0][0] - dataAside.data.list[0][1]) / dataAside.data.list[0][1] * 100).toFixed(2)}%</h4>
         </div>
         )}
-        {dataAside != null && (
-        <ResponsiveContainer id="chart" width="100%" height={50}>
-          <LineChart data={dataAside.data.list[0][3]}>
-            <XAxis dataKey="date" hide={true}/>
-            <YAxis domain={['auto', 'auto']} hide={true}/>
-            <Line type="monotone" dataKey="close" stroke={dataAside.data.list[0][0] > dataAside.data.list[0][1] ? 'green' : 'red' } dot={false}/>
-          </LineChart>
-        </ResponsiveContainer>
-        )}
+        {dataAside != null && <AsideChart dataAside={dataAside} index={0} />}
       </div>
       <div onClick={() => handleSubmit("^DJI", "7")} class="aside_panel">
         <h3>Dow 30</h3>
-        { loading == false && (
+        { dataAside != null && (
         <div class="panel">
-          <h4 style={{color: dataAside.data.list[1][0] > dataAside.data.list[1][1] ? 'green' : 'red' }} dot={false}>{dataAside.data.list[1][0]}</h4>
-          <h4 style={{color: dataAside.data.list[1][0] > dataAside.data.list[1][1] ? 'green' : 'red' }} dot={false}>{((dataAside.data.list[1][0] - dataAside.data.list[1][1]) / dataAside.data.list[1][1] * 100).toFixed(2)}%</h4>
+          <h4 style={{color: dataAside.data.list[1][0] > dataAside.data.list[1][1] ? 'green' : 'red' }}>{dataAside.data.list[1][0]}</h4>
+          <h4 style={{color: dataAside.data.list[1][0] > dataAside.data.list[1][1] ? 'green' : 'red' }}>{((dataAside.data.list[1][0] - dataAside.data.list[1][1]) / dataAside.data.list[1][1] * 100).toFixed(2)}%</h4>
         </div>
         )}
-        {dataAside != null && (
-        <ResponsiveContainer id="chart" width="100%" height={50}>
-          <LineChart data={dataAside.data.list[1][3]}>
-            <XAxis dataKey="date" hide={true}/>
-            <YAxis domain={['auto', 'auto']} hide={true}/>
-            <Line type="monotone" dataKey="close" stroke={dataAside.data.list[1][0] > dataAside.data.list[1][1] ? 'green' : 'red' } dot={false}/>
-          </LineChart>
-        </ResponsiveContainer>
-        )}
+        {dataAside != null && <AsideChart dataAside={dataAside} index={1} />}
       </div>
       <div onClick={() => handleSubmit("^IXIC","7")} class="aside_panel">
         <h3>Nasdaq</h3>
-        { loading == false && (
+        { dataAside != null && (
         <div class="panel">
-          <h4 style={{color: dataAside.data.list[2][0] > dataAside.data.list[2][1] ? 'green' : 'red' }} dot={false}>{dataAside.data.list[2][0]}</h4>
-          <h4 style={{color: dataAside.data.list[2][0] > dataAside.data.list[2][1] ? 'green' : 'red' }} dot={false}>{((dataAside.data.list[2][0] - dataAside.data.list[2][1]) / dataAside.data.list[2][1] * 100).toFixed(2)}%</h4>
+          <h4 style={{color: dataAside.data.list[2][0] > dataAside.data.list[2][1] ? 'green' : 'red' }}>{dataAside.data.list[2][0]}</h4>
+          <h4 style={{color: dataAside.data.list[2][0] > dataAside.data.list[2][1] ? 'green' : 'red' }}>{((dataAside.data.list[2][0] - dataAside.data.list[2][1]) / dataAside.data.list[2][1] * 100).toFixed(2)}%</h4>
         </div>
         )}
-        {dataAside != null && (
-        <ResponsiveContainer id="chart" width="100%" height={50}>
-          <LineChart data={dataAside.data.list[2][3]}>
-            <XAxis dataKey="date" hide={true}/>
-            <YAxis domain={['auto', 'auto']} hide={true}/>
-            <Line type="monotone" dataKey="close" stroke={dataAside.data.list[2][0] > dataAside.data.list[2][1] ? 'green' : 'red' } dot={false}/>
-          </LineChart>
-        </ResponsiveContainer>
-        )}
+        {dataAside != null && <AsideChart dataAside={dataAside} index={2} />}
       </div>
     </aside>
     </section>
