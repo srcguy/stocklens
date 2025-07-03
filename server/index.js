@@ -76,5 +76,9 @@ app.post('/aside', async(req, res) => {
     });
     });
 
+app.get('/', (req, res) => {
+  res.send('Backend works!'); // <-- lub inny komunikat
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
