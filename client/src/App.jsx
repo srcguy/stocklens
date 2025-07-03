@@ -40,7 +40,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const search = await axios.post($'{API_URL}/aside', {});
+      const search = await axios.post(API_URL+'/aside', {});
       console.log(search);
       setDataAside(search)
     }
