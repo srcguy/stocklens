@@ -77,7 +77,7 @@ app.post('/aside', async(req, res) => {
     });
 
 app.get('/', (req, res) => {
-  res.send('Backend works!'); // <-- lub inny komunikat
+  res.send('Backend works!'); 
 });
 
 const PORT = process.env.PORT || 8080;
