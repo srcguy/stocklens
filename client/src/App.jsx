@@ -9,6 +9,7 @@ function App() {
   const [data, setData] = useState(null);
   const [info, setInfo] = useState(null);
   const [dataAside, setDataAside] = useState(null);
+  const API_URL = "https://stocklens-5fqm.onrender.com";
 
   var rangeDays = 5;
   function rangeChange(symbolGet) {
@@ -25,7 +26,7 @@ function App() {
     if (rangeDays == ''){
       rangeDays = "7";
     }
-    const search = await axios.post('http://localhost:8080', { symbol: symbolGet, range: rangeDays});
+    const search = await axios.post(API_URL, { symbol: symbolGet, range: rangeDays});
     console.log(search.data.historyData);
     const formatted = search.data.historyData.map(item => ({
         date: item.date.slice(0,10),
@@ -39,7 +40,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const search = await axios.post('http://localhost:8080/aside', {});
+      const search = await axios.post($'{API_URL}/aside', {});
       console.log(search);
       setDataAside(search)
     }
