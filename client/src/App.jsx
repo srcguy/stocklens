@@ -10,7 +10,7 @@ function App() {
   const [info, setInfo] = useState(null);
   const [dataAside, setDataAside] = useState(null);
   const [dataAsideNoChart, setDataAsideNoChart] = useState(null);
-  const API_URL = "http://localhost:8080"; //https://stocklens-5fqm.onrender.com
+  const API_URL = "https://stocklens-5fqm.onrender.com"; //https://stocklens-5fqm.onrender.com
 
   var rangeDays = 5;
   function rangeChange(symbolGet) {
