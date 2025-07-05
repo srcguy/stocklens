@@ -9,7 +9,8 @@ function App() {
   const [data, setData] = useState(null);
   const [info, setInfo] = useState(null);
   const [dataAside, setDataAside] = useState(null);
-  const API_URL = "https://stocklens-5fqm.onrender.com";
+  const [dataAsideNoChart, setDataAsideNoChart] = useState(null);
+  const API_URL = "http://localhost:8080"; //https://stocklens-5fqm.onrender.com
 
   var rangeDays = 5;
   function rangeChange(symbolGet) {
@@ -17,6 +18,10 @@ function App() {
     {
       if (document.getElementById("days") != null && document.getElementById("days").value != ''){
         rangeDays = document.getElementById("days").value;
+        handleSubmit(symbolGet, rangeDays)
+      }
+      else {
+        rangeDays = 7;
         handleSubmit(symbolGet, rangeDays)
       }
     }
@@ -38,11 +43,26 @@ function App() {
     console.log(info)
   }
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="tooltip">
+          <p>Data: {label}</p>
+          <p>Cena: {payload[0].value.toFixed(2)}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+
   useEffect(() => {
     const fetchData = async () => {
       const search = await axios.post(API_URL+'/aside', {});
-      console.log(search);
+      const search2 = await axios.post(API_URL+'/asideNoChart', {});
+      //console.log(search2);
       setDataAside(search)
+      setDataAsideNoChart(search2)
     }
     fetchData();
     setInterval(async() => fetchData(), 5000)
@@ -55,7 +75,7 @@ function App() {
         <CartesianGrid strokeDasharray="1 4" />
         <XAxis dataKey="date" />
         <YAxis domain={['auto', 'auto']} />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Line isAnimationActive={false} type="monotone" dataKey="close" stroke="gray" dot={true} />
         </LineChart>
       </ResponsiveContainer>
@@ -79,10 +99,78 @@ function App() {
     <div id="bar">
       <h1>Stocklens</h1>
       <div id="empty"></div>
-      <input type='text' class="search" id="search" name="search" placeholder='Symbol...'></input>
+      <input onKeyDown={() => rangeChange(document.getElementById("search").value.toUpperCase())} type='text' class="search" id="search" name="search" placeholder='Symbol...'></input>
       <button onClick={() => handleSubmit(document.getElementById("search").value.toUpperCase(), "7")} id="search_button">🔎</button>
     </div>
     <section>
+    <aside>
+      <div class="aside_panel aside_left">
+        <h3>GPW</h3>
+        { dataAsideNoChart != null && (
+        <>
+        <div class="panel" onClick={() => handleSubmit("WIG20.WA", "7")}>
+          <h4>WIG20</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[0][0] > dataAsideNoChart.data.list[0][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[0][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[0][0] > dataAsideNoChart.data.list[0][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[0][0] - dataAsideNoChart.data.list[0][1]) / dataAsideNoChart.data.list[0][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("mWIG40.WA", "7")}>
+          <h4>mWIG40</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[1][0] > dataAsideNoChart.data.list[1][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[1][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[1][0] > dataAsideNoChart.data.list[1][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[1][0] - dataAsideNoChart.data.list[1][1]) / dataAsideNoChart.data.list[1][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("sWIG80.WA", "7")}>
+          <h4>sWIG80</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[2][0] > dataAsideNoChart.data.list[2][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[2][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[2][0] > dataAsideNoChart.data.list[2][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[2][0] - dataAsideNoChart.data.list[2][1]) / dataAsideNoChart.data.list[2][1] * 100).toFixed(2)}%</h5>
+        </div>
+        </>
+        )}
+      </div>
+      <div class="aside_panel aside_left">
+        <h3>Currencies</h3>
+        { dataAsideNoChart != null && (
+        <>
+        <div class="panel" onClick={() => handleSubmit("EURUSD=X", "7")}>
+          <h4>EUR/USD</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[3][0] > dataAsideNoChart.data.list[3][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[3][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[3][0] > dataAsideNoChart.data.list[3][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[3][0] - dataAsideNoChart.data.list[3][1]) / dataAsideNoChart.data.list[3][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("PLN=X", "7")}>
+          <h4>USD/PLN</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[4][0] > dataAsideNoChart.data.list[4][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[4][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[4][0] > dataAsideNoChart.data.list[4][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[4][0] - dataAsideNoChart.data.list[4][1]) / dataAsideNoChart.data.list[4][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("EURPLN=X", "7")}>
+          <h4>EUR/PLN</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[5][0] > dataAsideNoChart.data.list[5][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[5][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[5][0] > dataAsideNoChart.data.list[5][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[5][0] - dataAsideNoChart.data.list[5][1]) / dataAsideNoChart.data.list[5][1] * 100).toFixed(2)}%</h5>
+        </div>
+        </>
+        )}
+      </div>
+      <div class="aside_panel aside_left">
+        <h3>Crypto</h3>
+        { dataAsideNoChart != null && (
+        <>
+        <div class="panel" onClick={() => handleSubmit("BTC-USD", "7")}>
+          <h4>BTC/USD</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[6][0] > dataAsideNoChart.data.list[6][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[6][0].toFixed(1)}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[6][0] > dataAsideNoChart.data.list[6][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[6][0] - dataAsideNoChart.data.list[6][1]) / dataAsideNoChart.data.list[6][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("ETH-USD", "7")}>
+          <h4>ETH/USD</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[7][0] > dataAsideNoChart.data.list[7][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[7][0].toFixed(2)}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[7][0] > dataAsideNoChart.data.list[7][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[7][0] - dataAsideNoChart.data.list[7][1]) / dataAsideNoChart.data.list[7][1] * 100).toFixed(2)}%</h5>
+        </div>
+        <div class="panel" onClick={() => handleSubmit("SOL-USD", "7")}>
+          <h4>SOL/USD</h4>
+          <h5 style={{color: dataAsideNoChart.data.list[8][0] > dataAsideNoChart.data.list[8][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[8][0].toFixed(2)}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[8][0] > dataAsideNoChart.data.list[8][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[8][0] - dataAsideNoChart.data.list[8][1]) / dataAsideNoChart.data.list[8][1] * 100).toFixed(2)}%</h5>
+        </div>
+        </>
+        )}
+      </div>
+    </aside>
     <main>
     { info && (
       <div id="panel">
@@ -96,14 +184,34 @@ function App() {
     {data != null && <MainChart data={data}/>}
     { info && (
       <div id="panel_bottom">
-        <h3>Previous close: {info.data.previousClose} {info.data.currency}</h3>
-        <h3>Daily range: {info.data.low} {info.data.currency} - {info.data.high} {info.data.currency}</h3>
-        <h3>Market cap.: {info.data.capitalization} {info.data.currency}</h3>
+      <div>
+        <h3>Previous close: {info.data.previousClose}</h3>
+        <h3>Open: {info.data.open}</h3>
+        <h3>Bid: {info.data.bid}</h3>
+        <h3>Ask: {info.data.ask}</h3>
+      </div>
+      <div>
+        <h3>Day's range: {info.data.low} - {info.data.high}</h3>
+        <h3>52 week range: {info.data.ftwLow} - {info.data.ftwHigh}</h3>
+        <h3>Volume: {info.data.volume}</h3>
+        <h3>Avg. volume: {info.data.avgVolume}</h3>
+      </div>
+      <div>
+        {info.data.capitalization != null && (<h3>Market cap.: {info.data.capitalization}</h3>)}
+      </div>
+      <div>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "5")}>5d</button>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "7")}>1w</button>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "14")}>2w</button>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "30")}>1m</button>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "180")}>6m</button>
+        <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "360")}>1y</button>      
+      </div>
       </div>
     )}
     </main>
     <aside>
-      <div onClick={() => handleSubmit("^GSPC", "7")} class="aside_panel">
+      <div onClick={() => handleSubmit("^GSPC", "7")} class="aside_panel aside_right">
         <h3>S&P 500</h3>
         { dataAside != null && (
         <div class="panel">
@@ -113,7 +221,7 @@ function App() {
         )}
         {dataAside != null && <AsideChart dataAside={dataAside} index={0} />}
       </div>
-      <div onClick={() => handleSubmit("^DJI", "7")} class="aside_panel">
+      <div onClick={() => handleSubmit("^DJI", "7")} class="aside_panel aside_right">
         <h3>Dow 30</h3>
         { dataAside != null && (
         <div class="panel">
@@ -123,7 +231,7 @@ function App() {
         )}
         {dataAside != null && <AsideChart dataAside={dataAside} index={1} />}
       </div>
-      <div onClick={() => handleSubmit("^IXIC","7")} class="aside_panel">
+      <div onClick={() => handleSubmit("^IXIC","7")} class="aside_panel aside_right">
         <h3>Nasdaq</h3>
         { dataAside != null && (
         <div class="panel">
