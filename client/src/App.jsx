@@ -93,11 +93,11 @@ function App() {
     </ResponsiveContainer>  
     )
   }
-
+  
   return (
     <>
     <div id="bar">
-      <h1>Stocklens</h1>
+      <h1 className='title'>Stocklens</h1>
       <div id="empty"></div>
       <input onKeyDown={() => rangeChange(document.getElementById("search").value.toUpperCase())} type='text' class="search" id="search" name="search" placeholder='Symbol...'></input>
       <button onClick={() => handleSubmit(document.getElementById("search").value.toUpperCase(), "7")} id="search_button">🔎</button>
@@ -105,21 +105,21 @@ function App() {
     <section>
     <aside>
       <div class="aside_panel aside_left">
-        <h3>GPW</h3>
+        <h3>Commodities</h3>
         { dataAsideNoChart != null && (
         <>
-        <div class="panel" onClick={() => handleSubmit("WIG20.WA", "7")}>
-          <h4>WIG20</h4>
+        <div class="panel" onClick={() => handleSubmit("CL=F", "7")}>
+          <h4>Crude&nbsp;oil</h4>
           <h5 style={{color: dataAsideNoChart.data.list[0][0] > dataAsideNoChart.data.list[0][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[0][0]}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[0][0] > dataAsideNoChart.data.list[0][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[0][0] - dataAsideNoChart.data.list[0][1]) / dataAsideNoChart.data.list[0][1] * 100).toFixed(2)}%</h5>
         </div>
-        <div class="panel" onClick={() => handleSubmit("mWIG40.WA", "7")}>
-          <h4>mWIG40</h4>
+        <div class="panel" onClick={() => handleSubmit("GC=F", "7")}>
+          <h4>Gold</h4>
           <h5 style={{color: dataAsideNoChart.data.list[1][0] > dataAsideNoChart.data.list[1][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[1][0]}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[1][0] > dataAsideNoChart.data.list[1][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[1][0] - dataAsideNoChart.data.list[1][1]) / dataAsideNoChart.data.list[1][1] * 100).toFixed(2)}%</h5>
         </div>
-        <div class="panel" onClick={() => handleSubmit("sWIG80.WA", "7")}>
-          <h4>sWIG80</h4>
+        <div class="panel" onClick={() => handleSubmit("SI=F", "7")}>
+          <h4>Silver</h4>
           <h5 style={{color: dataAsideNoChart.data.list[2][0] > dataAsideNoChart.data.list[2][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[2][0]}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[2][0] > dataAsideNoChart.data.list[2][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[2][0] - dataAsideNoChart.data.list[2][1]) / dataAsideNoChart.data.list[2][1] * 100).toFixed(2)}%</h5>
         </div>
@@ -132,17 +132,17 @@ function App() {
         <>
         <div class="panel" onClick={() => handleSubmit("EURUSD=X", "7")}>
           <h4>EUR/USD</h4>
-          <h5 style={{color: dataAsideNoChart.data.list[3][0] > dataAsideNoChart.data.list[3][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[3][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[3][0] > dataAsideNoChart.data.list[3][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[3][0].toFixed(3)}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[3][0] > dataAsideNoChart.data.list[3][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[3][0] - dataAsideNoChart.data.list[3][1]) / dataAsideNoChart.data.list[3][1] * 100).toFixed(2)}%</h5>
         </div>
         <div class="panel" onClick={() => handleSubmit("PLN=X", "7")}>
           <h4>USD/PLN</h4>
-          <h5 style={{color: dataAsideNoChart.data.list[4][0] > dataAsideNoChart.data.list[4][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[4][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[4][0] > dataAsideNoChart.data.list[4][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[4][0].toFixed(3)}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[4][0] > dataAsideNoChart.data.list[4][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[4][0] - dataAsideNoChart.data.list[4][1]) / dataAsideNoChart.data.list[4][1] * 100).toFixed(2)}%</h5>
         </div>
         <div class="panel" onClick={() => handleSubmit("EURPLN=X", "7")}>
           <h4>EUR/PLN</h4>
-          <h5 style={{color: dataAsideNoChart.data.list[5][0] > dataAsideNoChart.data.list[5][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[5][0]}</h5>
+          <h5 style={{color: dataAsideNoChart.data.list[5][0] > dataAsideNoChart.data.list[5][1] ? 'green' : 'red' }}>{dataAsideNoChart.data.list[5][0].toFixed(3)}</h5>
           <h5 style={{color: dataAsideNoChart.data.list[5][0] > dataAsideNoChart.data.list[5][1] ? 'green' : 'red' }}>{((dataAsideNoChart.data.list[5][0] - dataAsideNoChart.data.list[5][1]) / dataAsideNoChart.data.list[5][1] * 100).toFixed(2)}%</h5>
         </div>
         </>
@@ -208,6 +208,18 @@ function App() {
         <button onClick={() => handleSubmit(document.getElementById("symbol").innerText, "360")}>1y</button>      
       </div>
       </div>
+    )}
+    {info == null && (
+    <article>
+      <h1>Welcome to Stocklens</h1>
+      <h3>
+      To begin, enter a stock symbol above - for example: AAPL, MSFT, or TSLA - and explore detailed market data, charts, and company insights.
+      <br></br>
+      If you're not seeing data on the sides of the screen just yet, hang tight - we're connecting to live market APIs to bring you the latest prices. This usually takes just a few seconds.
+      <br></br>
+      Ready to dive in? Search for a symbol and start exploring!
+      </h3>
+    </article>
     )}
     </main>
     <aside>
