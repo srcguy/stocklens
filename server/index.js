@@ -28,13 +28,16 @@ app.post('/', async(req, res) => {
     {
       currencySymbol = "$"
     }
-    if (quote.currency == "EUR")
+    else if (quote.currency == "EUR")
     {
       currencySymbol = "€"
     }
+    else {
+      currencySymbol = quote.currency;
+    }
     res.json({
       symbol,
-      companyName: quote.longName,
+      companyName: quote.shortName,
       currentPrice: quote.regularMarketPrice,
       high: quote.regularMarketDayHigh,
       low: quote.regularMarketDayLow,
@@ -85,7 +88,7 @@ app.post('/aside', async(req, res) => {
   });
 
 app.post('/asideNoChart', async(req, res) => {
-    const symbolList = ["WIG20.WA", "mWIG40.WA", "sWIG80.WA", "EURUSD=X", "PLN=X", "EURPLN=X", "BTC-USD", "ETH-USD", "SOL-USD"];
+    const symbolList = ["CL=F", "GC=F", "SI=F", "EURUSD=X", "PLN=X", "EURPLN=X", "BTC-USD", "ETH-USD", "SOL-USD"];
     const dataList = [];
     for (const symbol of symbolList) {
       const quote = await yahooFinance.quote(symbol);
