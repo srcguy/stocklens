@@ -42,72 +42,80 @@ app.post('/', async(req, res) => {
       high: quote.regularMarketDayHigh,
       low: quote.regularMarketDayLow,
       previousClose: quote.regularMarketPreviousClose,
-      open: quote.regularMarketOpen,
+      exchange: quote.fullExchangeName,
+      dividend: quote.trailingAnnualDividendYield,
+      pe: quote.trailingPE,
       avgVolume: quote.averageDailyVolume3Month,
-      volume: quote.regularMarketVolume,
-      ftwLow: quote.fiftyTwoWeekLow,
-      ftwHigh: quote.fiftyTwoWeekHigh,
       capitalization: quote.marketCap,
       currency: currencySymbol,
-      bid: quote.bid,
-      ask: quote.ask,
 
       historyData: history.reverse()
     });
 })
 
-app.post('/aside', async(req, res) => {
-    const symbolList = ["^GSPC", "^DJI", "^IXIC"];
-    const dataList = [];
-    for (const symbol of symbolList) {
-      const quote = await yahooFinance.quote(symbol);
-      //console.log(quote);
-      var datetime = new Date();
-      datetime.setDate(datetime.getDate() - 7);
-      const queryOptions = { period1: datetime.toISOString().slice(0,10), /* ... */ };
-      const history = await yahooFinance.historical(symbol, queryOptions);
-      //console.log(history);
-      const formatted = history.map(item => ({
-          date: item.date.toISOString().slice(0,10),
-          close: item.close
-      }));
-      var currencySymbol
-      if (quote.currency == "USD")
-      {
-        currencySymbol = "$"
-      }
-      if (quote.currency == "EUR")
-      {
-        currencySymbol = "€"
-      }
-      dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, currencySymbol, formatted, symbol]);
-    }
-    res.json({
-      list: dataList
-    });
+app.post('/fav', async(req, res) => {
+  const quote = await yahooFinance.quote(req.body.symbol);
+  res.json({
+    currentPrice: quote.regularMarketPrice, 
+    previousClose: quote.regularMarketPreviousClose, 
+    companyName: quote.shortName ,
+    symbol: req.body.symbol
   });
+});
 
-app.post('/asideNoChart', async(req, res) => {
-    const symbolList = ["CL=F", "GC=F", "SI=F", "EURUSD=X", "PLN=X", "EURPLN=X", "BTC-USD", "ETH-USD", "SOL-USD"];
-    const dataList = [];
-    for (const symbol of symbolList) {
-      const quote = await yahooFinance.quote(symbol);
-      //console.log(quote);
-      var currencySymbol
-      if (quote.currency == "USD")
-      {
-        currencySymbol = "$"
-      }
-      if (quote.currency == "EUR")
-      {
-        currencySymbol = "€"
-      }
-      dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, currencySymbol, null, symbol]);
-    }
-    res.json({
-      list: dataList
-    });
+app.post('/indexes', async(req, res) => {
+  const symbolList = ["^GSPC", "^DJI", "^IXIC", "^NDX", "^NYA", "^FTSE", "^FCHI", "^GDAXI", "^STOXX50E","^N225", "^HSI", "^AXJO"]; //5x usa, 4x eu, 3x asia
+  const dataList = [];
+  for (const symbol of symbolList) {
+    const quote = await yahooFinance.quote(symbol);
+    //console.log(quote);
+    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,symbol]);
+  }
+  res.json({
+    dataList
   });
+});
+
+app.post('/crypto', async(req, res) => {
+  const symbolList = ["BTC-USD", "ETH-USD", "XRP-USD", "USDT-USD", "BNB-USD", "SOL-USD", "USDC-USD", "DOGE-USD", "STETH-USD","TRX-USD", "ADA-USD", "WTRX-USD"];
+  const dataList = [];
+  for (const symbol of symbolList) {
+    const quote = await yahooFinance.quote(symbol);
+    //console.log(quote);
+    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,symbol]);
+  }
+  res.json({
+    dataList
+  });
+});
+
+app.post('/currencies', async(req, res) => {
+  const symbolList = ["EURUSD=X", "JPY=X", "GBPUSD=X", "AUDUSD=X", "NZDUSD=X", "EURJPY=X", "GBPJPY=X", "EURGBP=X", "EURCAD=X", "EURSEK=X", "EURCHF=X", "EURHUF=X"];
+  const dataList = [];
+  for (const symbol of symbolList) {
+    const quote = await yahooFinance.quote(symbol);
+    //console.log(quote);
+    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,symbol]);
+  }
+  res.json({
+    dataList
+  });
+});
+
+
+app.post('/trending', async(req, res) => {
+  const dataList = [];
+  const quote = await yahooFinance.trendingSymbols('US', {count: 12});
+  const symbolList = quote.quotes;
+  for (const symbol of symbolList) {
+    const quote = await yahooFinance.quote(symbol.symbol);
+    //console.log(quote);
+    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,quote.symbol]);
+  }
+  res.json({
+    dataList
+  });
+});
 
 app.get('/', (req, res) => {
   res.send('Backend works!'); 
