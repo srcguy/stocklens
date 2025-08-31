@@ -26,7 +26,7 @@ function App() {
   const [info, setInfo] = useState();
   const [range, setRange] = useState();
   const [loading, setLoading] = useState(true);
-  const API_URL = "http://localhost:8080"
+  const API_URL = "https://stocklens-5fqm.onrender.com"
   const PHP_URL = "http://localhost/stocklens/"
 
   const chartConfig = {
@@ -288,3 +288,4 @@ function App() {
 }
 
 export default App
+
