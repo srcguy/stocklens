@@ -10,8 +10,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { motion } from "motion/react"
 import {
   ChartContainer,
@@ -22,11 +20,14 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 
 function App() {
   const [symbol, setSymbol] = useState();
+  const [dataMain, setDataMain] = useState();
+  const [dataCompare, setDataCompare] = useState();
   const [data, setData] = useState();
   const [info, setInfo] = useState();
+  const [range, setRange] = useState();
   const [loading, setLoading] = useState(true);
   const API_URL = "http://localhost:8080"
-  const PHP_URL = "https://brunos.ct.ws/stocklens/"
+  const PHP_URL = "http://localhost/stocklens/"
 
   const chartConfig = {
   desktop: {
@@ -36,18 +37,18 @@ function App() {
   }
 
   const Heart = async() => {
-    await fetch(PHP_URL + "save_favorite.php", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({symbol: symbol}),
-      credentials: 'include'
-    })
-    .then((res) => res.text())
-    .then((data) => {
-      console.log(data)
-    })
+    let list = JSON.parse(localStorage.getItem("favorites"))
+    if (list != null && list.includes(symbol)){
+      var index = list.indexOf(symbol);
+      if (index !== -1) {
+        list.splice(index, 1);
+        localStorage.setItem("favorites", JSON.stringify(list))
+      }
+    }
+    else {
+      list.push(symbol)
+      localStorage.setItem("favorites", JSON.stringify(list))
+    }
     if (document.getElementById("heart").innerText == "🤍"){
       document.getElementById("heart").innerText = "💛"
     }
@@ -58,56 +59,76 @@ function App() {
 
   async function search(symbol) {
     if (event.keyCode == 13){
-      await fetch(PHP_URL + "save_symbol.php", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({symbol: symbol}),
-        credentials: 'include'
-      })
-      .then((res) => res.text())
-      .then((data) => {
-        console.log(data)
-      })
-      .then(() => {
-        open("stock.html", "_self")
-      })
+      localStorage.setItem("symbol", symbol)
+      open("stock.html", "_self")
+    }
+  }
+
+  async function compare(symbol) {
+    if (event.keyCode == 13){
+      let rangeDays = range
+      if (range == ''){
+        rangeDays = "7";
+      }
+      const search = await axios.post(API_URL, { symbol: symbol, range: rangeDays})
+      const formatted = search.data.historyData.map(item => ({
+          close2: item.close
+      }));
+      setDataCompare(formatted);
+      setLoading(false)
+      let n = 0
+      for (const obj of data){
+        console.log(obj)
+        obj.close2 = formatted[n].close2
+        n++
+      }
+      console.log(data)
+      Chart(data)
     }
   }
 
   function Chart({data}){
     return(
       <ChartContainer config={chartConfig} className="mt-6">
-          <LineChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-            />
-            <YAxis domain={['auto', 'auto']} />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Line
-              dataKey="close"
-              type="natural"
-              stroke="var(--color-desktop)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ChartContainer>
+        <LineChart
+          accessibilityLayer
+          data={data}
+          margin={{
+            left: 12,
+            right: 12,
+          }}
+        > 
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="date"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+        />
+        <YAxis yAxisId="left" domain={['auto', 'auto']} />
+        <YAxis yAxisId="right" domain={['auto', 'auto']} orientation='right'/>
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent />}
+        />
+        <Line
+          yAxisId="left"
+          dataKey="close"
+          type="natural"
+          stroke="#DE4A1F"
+          strokeWidth={2}
+          dot={false}
+        />
+        <Line
+          yAxisId="right"
+          dataKey="close2"
+          type="natural"
+          stroke="#1F6FDE"
+          strokeWidth={2}
+          dot={false}
+        />
+        </LineChart>
+      </ChartContainer>
     )
   }
 
@@ -115,50 +136,35 @@ function App() {
     if (rangeDays == ''){
       rangeDays = "7";
     }
+    setRange(rangeDays)
     const search = await axios.post(API_URL, { symbol: symbol, range: rangeDays});
     console.log(search.data.historyData);
     const formatted = search.data.historyData.map(item => ({
         date: item.date.slice(0,10),
         close: item.close
     }));
-    setData(formatted.reverse());
+    console.log(formatted.reverse())
+    setDataMain(formatted.reverse());
+    setData(formatted.reverse())
     setInfo(search)
     setLoading(false)
   }
 
   const downloadSymbol = async() => {
-    const res = await fetch(PHP_URL + "read_symbol.php", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    })
-    const data = await res.json()
-    console.log(data)
-    setSymbol(data.symbol)
+    setSymbol(localStorage.getItem("symbol"))
   }
 
   const checkHeart = async() => {
-    await fetch(PHP_URL + "read_favorites.php", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    })
-    .then((res) => res.text())
-    .then((data) => {
-      JSON.parse(data).symbol.forEach(async(element) => {
-        console.log(symbol)
+    if (localStorage.getItem("favorites") != null){
+      const list = JSON.parse(localStorage.getItem("favorites"))
+      list.forEach(async(element) => {
         console.log(element)
         if (element == symbol){
           document.getElementById("heart").innerText = "💛";
         }
       })
-    })
+    }
   }
-
 
   useEffect(() => {
     downloadSymbol();
@@ -190,12 +196,13 @@ function App() {
   console.log(info)
   const pChange = parseFloat(((info.data.currentPrice - info.data.previousClose) / info.data.previousClose) * 100).toFixed(2)
   const change = parseFloat(info.data.currentPrice - info.data.previousClose).toFixed(2)
+
   return (
     <>
     <div className='bg-stone-900 flex justify-center'>
       <input onKeyDown={() => search(document.getElementById("search").value)} id="search" type="text" placeholder='Search...' className='bg-stone-800 text-stone-50 h-[5vh] w-[15vw] pl-3 rounded-lg mt-10 mb-8'></input>
     </div>
-    <div className='bg-stone-900 h-[100vh] flex justify-center'>
+    <div className='bg-stone-900 h-[75vh] flex justify-center'>
       <div className='w-[50vw]'>
         <p id="name" className='text-[3vw] text-stone-50 font-bold'>{info.data.companyName} <span className='text-[2vw]'>{info.data.currentPrice}</span> <span className={parseFloat(pChange) > 0 ? "text-[1.5vw] text-green-700" : "text-[1.5vw] text-red-600"}>{pChange}%</span> <span className={parseFloat(change) > 0 ? "text-[1.5vw] text-green-700" : "text-[1.5vw] text-red-600"}>{change}</span></p>
         <NavigationMenu className="mt-2">
@@ -272,6 +279,9 @@ function App() {
           </tr>
         </table>
       </div>
+    </div>
+    <div className='bg-stone-900 flex justify-center'>
+      <input onKeyDown={() => compare(document.getElementById("compare").value)} id="compare" type="text" placeholder='Compare with...' className='bg-stone-800 text-stone-50 h-[5vh] w-[15vw] pl-3 rounded-lg mt-8 mb-20'></input>
     </div>
     </>
   )
