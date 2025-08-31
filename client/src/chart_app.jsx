@@ -24,7 +24,7 @@ function App() {
   if (localStorage.getItem("wallets") == null){
     localStorage.setItem("wallets", JSON.stringify([]))
   }
-  const API_URL = "http://localhost:8080"
+  const API_URL = "https://stocklens-5fqm.onrender.com"
   const PHP_URL = "http://localhost/stocklens/"
 
   const search = async(symbol, nonEnter) => {
@@ -161,3 +161,4 @@ function App() {
 }
 
 export default App
+
