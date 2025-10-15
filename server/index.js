@@ -76,6 +76,19 @@ app.post('/indexes', async(req, res) => {
   });
 });
 
+app.get('/indexes', async(req, res) => {
+  const symbolList = ["^GSPC", "^DJI", "^IXIC", "^NDX", "^NYA", "^FTSE", "^FCHI", "^GDAXI", "^STOXX50E","^N225", "^HSI", "^AXJO"]; //5x usa, 4x eu, 3x asia
+  const dataList = [];
+  for (const symbol of symbolList) {
+    const quote = await yahooFinance.quote(symbol);
+    //console.log(quote);
+    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,symbol]);
+  }
+  res.json({
+    dataList
+  });
+});
+
 app.post('/crypto', async(req, res) => {
   const symbolList = ["BTC-USD", "ETH-USD", "XRP-USD", "USDT-USD", "BNB-USD", "SOL-USD", "USDC-USD", "DOGE-USD", "STETH-USD","TRX-USD", "ADA-USD", "WTRX-USD"];
   const dataList = [];
@@ -123,3 +136,4 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+
