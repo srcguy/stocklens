@@ -35,7 +35,7 @@ function App() {
   }
 
   const handleSubmit = async(type) => {
-    const download = await axios.post(API_URL+"/"+type, {});
+    const download = await axios.get(API_URL+"/"+type, {});
     console.log(download);
     let returnValue = [];
     for (let i = 0; i < 12; i += 4){
@@ -161,4 +161,5 @@ function App() {
 }
 
 export default App
+
 
