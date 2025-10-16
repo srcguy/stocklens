@@ -10,7 +10,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "motion/react"
 
@@ -24,18 +23,18 @@ function App() {
   if (localStorage.getItem("wallets") == null){
     localStorage.setItem("wallets", JSON.stringify([]))
   }
-  const API_URL = "https://stocklens-5fqm.onrender.com"
+  const API_URL = "https://stocklens-5fqm.onrender.com/"
   const PHP_URL = "http://localhost/stocklens/"
 
   const search = async(symbol, nonEnter) => {
     if (event.keyCode == 13 || nonEnter){
       localStorage.setItem("symbol", symbol)
-      open("stock.html")
+      open("/stock.html")
     }
   }
 
   const handleSubmit = async(type) => {
-    const download = await axios.get(API_URL+"/"+type, {});
+    const download = await axios.post(API_URL+type, {});
     console.log(download);
     let returnValue = [];
     for (let i = 0; i < 12; i += 4){
@@ -58,7 +57,7 @@ function App() {
     console.log(data)
     for(const element of data) {
       console.log(element)
-      let download = await axios.post(API_URL+"/fav", {symbol: element});
+      let download = await axios.post(API_URL+"fav", {symbol: element});
       //console.log(download)
       datas.push(download.data)
     }
@@ -85,7 +84,7 @@ function App() {
     for(const element of data) {
       console.log(element.symbols)
       for (const symbol of element.symbols){
-        let download = await axios.post(API_URL+"/fav", {symbol: symbol});
+        let download = await axios.post(API_URL+"fav", {symbol: symbol});
         datas.push(download.data)
       }
       returnValue.push(
@@ -112,6 +111,13 @@ function App() {
   useEffect(() => {
     downloadFav();
     downloadWall();
+    let tempValue = [];
+    tempValue.push(
+      <div className='bg-stone-900 h-[10vh] flex gap-10 justify-center'>
+          <p className='text-[2em] text-white'>If stocks don't show up, wait a moment! Server is probably starting</p>        
+      </div>
+      )
+    setData(tempValue)
   }, [])
 
   return (
@@ -161,5 +167,4 @@ function App() {
 }
 
 export default App
-
-
+//szarałt seba
