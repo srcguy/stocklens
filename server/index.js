@@ -1,7 +1,9 @@
 import express from 'express';
-import yahooFinance from 'yahoo-finance2';
 import cors from 'cors';
+import YahooFinance from 'yahoo-finance2';
 const app = express();
+
+const yahooFinance = new YahooFinance();
 
 app.use(cors())
 app.use(express.json());
@@ -12,16 +14,22 @@ app.post('/', async(req, res) => {
     const quote = await yahooFinance.quote(symbol);
     console.log(quote);
     var datetime = new Date();
+    const period1 = new Date(datetime);
+    var period2 = new Date(datetime);
     if (isNaN(range) == false)
     {
-      datetime.setDate(datetime.getDate() - range);
+      period2.setDate(period2.getDate() - range);
     }
     else
     {
-      datetime.setDate(datetime.getDate() - 7);
+      period2.setDate(period2.getDate() - 7);
     }
-    const queryOptions = { period1: datetime.toISOString().slice(0,10), /* ... */ };
-    const history = await yahooFinance.historical(symbol, queryOptions);
+    console.log(period1)
+    console.log(period2)
+    const periods = {
+    period1: period2,
+    period2: period1};
+    const history = await yahooFinance.historical(symbol, periods);
     console.log(history);
     var currencySymbol
     if (quote.currency == "USD")
@@ -64,19 +72,6 @@ app.post('/fav', async(req, res) => {
 });
 
 app.post('/indexes', async(req, res) => {
-  const symbolList = ["^GSPC", "^DJI", "^IXIC", "^NDX", "^NYA", "^FTSE", "^FCHI", "^GDAXI", "^STOXX50E","^N225", "^HSI", "^AXJO"]; //5x usa, 4x eu, 3x asia
-  const dataList = [];
-  for (const symbol of symbolList) {
-    const quote = await yahooFinance.quote(symbol);
-    //console.log(quote);
-    dataList.push([quote.regularMarketPrice, quote.regularMarketPreviousClose, quote.shortName ,symbol]);
-  }
-  res.json({
-    dataList
-  });
-});
-
-app.get('/indexes', async(req, res) => {
   const symbolList = ["^GSPC", "^DJI", "^IXIC", "^NDX", "^NYA", "^FTSE", "^FCHI", "^GDAXI", "^STOXX50E","^N225", "^HSI", "^AXJO"]; //5x usa, 4x eu, 3x asia
   const dataList = [];
   for (const symbol of symbolList) {
@@ -134,6 +129,5 @@ app.get('/', (req, res) => {
   res.send('Backend works!'); 
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-

@@ -13,6 +13,6 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "require": "^2.4.20",
-    "yahoo-finance2": "^2.13.3"
+    "yahoo-finance2": "^3.11.1"
   }
 }
